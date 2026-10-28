@@ -1,4 +1,5 @@
 from circuit.components import Resistor, VoltageSource
+import networkx as nx
 
 
 class Circuit:
@@ -22,4 +23,30 @@ class Circuit:
     def add_voltage_source(self, name, node1, node2, voltage):
         source = VoltageSource(name, node1, node2, voltage)
         self.add_component(source)
+
+    def to_graph(self):
+        graph = nx.MultiGraph()
+
+        for node in self.nodes:
+            graph.add_node(node)
+
+        for name in self.components:
+            component = self.components[name]
+            if isinstance(component, Resistor):
+                graph.add_edge(
+                    component.node1,
+                    component.node2,
+                    key=component.name,
+                    type="resistor",
+                    resistance=component.resistance
+                )
+            elif isinstance(component, VoltageSource):
+                graph.add_edge(
+                    component.node1,
+                    component.node2,
+                    key=component.name,
+                    type="voltage_source",
+                    voltage = component.voltage
+                )
+        return graph
         
