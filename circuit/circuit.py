@@ -49,4 +49,14 @@ class Circuit:
                     voltage = component.voltage
                 )
         return graph
-        
+
+    def get_ungrounded_nodes(self):
+        graph = self.to_graph()
+
+        ungrounded_nodes = set()
+
+        for component in nx.connected_components(graph):
+            if "GND" not in component:
+                ungrounded_nodes.update(component)
+
+        return ungrounded_nodes

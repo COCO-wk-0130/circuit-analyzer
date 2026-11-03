@@ -73,6 +73,21 @@ class TestCircuit(unittest.TestCase):
             "voltage_source"
         )
 
+    def test_ungrounded_nodes(self):
+        case_list = [
+            [[("R1", "A", "GND", 1000), ("R2", "A", "B", 2000)], set()],
+            [[("R1", "A", "GND", 1000), ("R2", "C", "D", 2000)], {"C", "D"}],
+            [[("R1", "A", "B", 1000)], {"A", "B"}]
+            ] 
+        for case in case_list:
+            with self.subTest(case=case):
+                circuit = Circuit()
+                for name, node1, node2, resistance in case[0]:
+                    circuit.add_resistor(name, node1, node2, resistance)
+                ungrounded_nodes = circuit.get_ungrounded_nodes()
+                self.assertEqual(ungrounded_nodes, case[1])
+                
+
 
 if __name__ == "__main__":
     unittest.main()
